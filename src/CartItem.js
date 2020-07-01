@@ -13,7 +13,6 @@ const CartItem = (props) => {
                 <div style={{ color: '#777' }}>Rs {price}</div>
                 <div style={{ color: '#777' }}>Qty:{qty}</div>
                 <div className="cart-item-actions">
-                    {/*Buttons*/}
                     <img
                         alt="increase"
                         className="action-icons"
