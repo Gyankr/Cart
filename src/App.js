@@ -92,11 +92,30 @@ class App extends React.Component {
 
     return cartTotal;
   }
+
+  addProduct = () => {
+    firebase
+     .firestore()
+     .collection('products')
+     .add({
+       img : 'https://png.pngtree.com/png-clipart/20190905/original/pngtree-cartoon-one-earphone-illustration-png-image_4516476.jpg',
+       price: 1580,
+       qty:0,
+       title:'Earphone'
+     })
+     .then((docRef)=>{
+      console.log('Product has been added : ', docRef);
+     })
+     .catch((error)=>{
+       console.log('Error : ', error);
+     })
+  }
   render() {
     const { products,loading } = this.state;
     return (
       <div className="App">
         <Navbar count={this.getCartCount()} />
+        <button onClick={this.addProduct} style={{padding:20, fontSize:20}}>Add a Product</button>
         <Cart
           products={products}
           onIncreaseQuantity={this.handelIncreaseQuantity}
