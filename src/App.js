@@ -10,27 +10,11 @@ class App extends React.Component {
       products: [],
       loading:true
     }
+    this.db = firebase.firestore();
   }
 
   componentDidMount() {
-    // firebase
-    //   .firestore()
-    //   .collection('products')
-    //   .get()
-    //   .then((snapshot) => {
-    //     const products = snapshot.docs.map((doc) => {
-    //       const data = doc.data();
-    //       data['id'] = doc.id;          
-    //       return data;
-    //     })
-    //     this.setState({
-    //       products,
-    //       loading:false
-    //     })
-    //   })
-
-    firebase
-      .firestore()
+    this.db
       .collection('products')
       .onSnapshot((snapshot) => {
         const products = snapshot.docs.map((doc) => {
@@ -49,10 +33,18 @@ class App extends React.Component {
   handelIncreaseQuantity = (product) => {
     const { products } = this.state;
     const index = products.indexOf(product);
-    products[index].qty += 1;
-    this.setState({
-      products
+    const docRef = this.db.collection('products').doc(products[index].id);
+
+    docRef
+     .update({
+      qty:products[index].qty+1
     })
+    .then(()=>{
+      console.log('Product has been Updated')
+     })
+     .catch((error)=>{
+       console.log('Error : ', error);
+     })
   }
   handelDecreaseQuantity = (product) => {
     const { products } = this.state;
@@ -60,17 +52,31 @@ class App extends React.Component {
     if (products[index].qty === 0) {
       return;
     }
-    products[index].qty -= 1;
-    this.setState({
-      products
+    const docRef = this.db.collection('products').doc(products[index].id);
+
+    docRef
+     .update({
+      qty:products[index].qty-1
     })
+    .then(()=>{
+      console.log('Product has been Updated')
+     })
+     .catch((error)=>{
+       console.log('Error : ', error);
+     })
   }
   handelDeleteProduct = (id) => {
     const { products } = this.state;
-    const items = products.filter((item) => item.id !== id);
-    this.setState({
-      products: items
-    })
+    const docRef = this.db.collection('products').doc(id);
+
+    docRef
+     .delete()
+    .then(()=>{
+      console.log('Product Deleted Successfully');
+     })
+     .catch((error)=>{
+       console.log('Error : ', error);
+     })
   }
   getCartCount = () => {
     const { products } = this.state;
@@ -94,8 +100,7 @@ class App extends React.Component {
   }
 
   addProduct = () => {
-    firebase
-     .firestore()
+    this.db
      .collection('products')
      .add({
        img : 'https://png.pngtree.com/png-clipart/20190905/original/pngtree-cartoon-one-earphone-illustration-png-image_4516476.jpg',
